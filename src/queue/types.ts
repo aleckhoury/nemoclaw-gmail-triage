@@ -30,6 +30,9 @@ export interface DraftReplyProposal {
 }
 
 export type Proposal = FilterProposal | DraftReplyProposal;
+export type NewProposal =
+  | Omit<FilterProposal, "id" | "createdAt">
+  | Omit<DraftReplyProposal, "id" | "createdAt">;
 
 export interface AuditEntry {
   timestamp: string;

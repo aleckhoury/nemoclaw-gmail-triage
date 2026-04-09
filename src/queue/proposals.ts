@@ -2,7 +2,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { randomUUID } from "node:crypto";
-import type { Proposal, AuditEntry } from "./types.js";
+import type { Proposal, NewProposal, AuditEntry } from "./types.js";
 
 const DATA_DIR = join(homedir(), ".openclaw-data", "gmail-triage");
 const PROPOSALS_PATH = join(DATA_DIR, "proposals.json");
@@ -26,7 +26,7 @@ export async function saveProposals(proposals: Proposal[]): Promise<void> {
   await writeFile(PROPOSALS_PATH, JSON.stringify(proposals, null, 2), "utf-8");
 }
 
-export async function addProposal(proposal: Omit<Proposal, "id" | "createdAt">): Promise<Proposal> {
+export async function addProposal(proposal: NewProposal): Promise<Proposal> {
   const proposals = await loadProposals();
   const full: Proposal = {
     ...proposal,

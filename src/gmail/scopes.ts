@@ -8,7 +8,7 @@ export const SCOPES_BASE = [
 export const SCOPE_SEND = "https://www.googleapis.com/auth/gmail.send" as const;
 
 export function getScopes(enableSend: boolean): string[] {
-  const scopes = [...SCOPES_BASE];
+  const scopes: string[] = [...SCOPES_BASE];
   if (enableSend) scopes.push(SCOPE_SEND);
   return scopes;
 }
