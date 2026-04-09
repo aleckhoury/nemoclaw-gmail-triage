@@ -1,3 +1,4 @@
+import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { gmailSearchTool } from "./tools/search.js";
 import { gmailReadThreadTool } from "./tools/read-thread.js";
 import { gmailListLabelsTool, gmailCreateLabelTool, gmailApplyLabelsTool } from "./tools/labels.js";
@@ -5,26 +6,26 @@ import { gmailInboxStatsTool } from "./tools/stats.js";
 import { gmailProposeFilterTool } from "./tools/propose-filter.js";
 import { gmailProposeDraftReplyTool } from "./tools/propose-draft.js";
 import { registerRoutes } from "./routes/ui-routes.js";
-import { gmailCommand } from "./commands/gmail.js";
+import { gmailSetupCommand, gmailStatusCommand, gmailReviewCommand } from "./commands/gmail.js";
 
-interface PluginApi {
-  registerTool: (tool: { name: string; description: string; parameters: unknown; execute: Function }) => void;
-  registerCommand: (cmd: { name: string; description: string; execute: Function }) => void;
-  registerHttpRoute: (method: string, path: string, handler: Function) => void;
-  getConfig: () => Record<string, unknown>;
-}
+export default definePluginEntry({
+  id: "gmail-triage",
+  name: "Gmail Triage",
+  description: "AI-powered Gmail inbox triage with human-in-the-loop approval",
+  register(api) {
+    api.registerTool(gmailSearchTool);
+    api.registerTool(gmailReadThreadTool);
+    api.registerTool(gmailListLabelsTool);
+    api.registerTool(gmailCreateLabelTool);
+    api.registerTool(gmailApplyLabelsTool);
+    api.registerTool(gmailInboxStatsTool);
+    api.registerTool(gmailProposeFilterTool);
+    api.registerTool(gmailProposeDraftReplyTool);
 
-export function activate(api: PluginApi): void {
-  api.registerTool(gmailSearchTool);
-  api.registerTool(gmailReadThreadTool);
-  api.registerTool(gmailListLabelsTool);
-  api.registerTool(gmailCreateLabelTool);
-  api.registerTool(gmailApplyLabelsTool);
-  api.registerTool(gmailInboxStatsTool);
-  api.registerTool(gmailProposeFilterTool);
-  api.registerTool(gmailProposeDraftReplyTool);
+    registerRoutes(api as any);
 
-  registerRoutes(api as any);
-
-  api.registerCommand(gmailCommand);
-}
+    api.registerCommand(gmailSetupCommand);
+    api.registerCommand(gmailStatusCommand);
+    api.registerCommand(gmailReviewCommand);
+  },
+});

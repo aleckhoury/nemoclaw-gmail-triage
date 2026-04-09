@@ -3,6 +3,7 @@ import { getThread, getHeader, getPlainTextBody } from "../gmail/client.js";
 
 export const gmailReadThreadTool = {
   name: "gmail_read_thread",
+  label: "Read Gmail Thread",
   description:
     "Read a full Gmail thread by ID. Returns all messages with headers, plain text body, and attachment metadata.",
   parameters: Type.Object({
@@ -30,6 +31,7 @@ export const gmailReadThreadTool = {
         type: "text" as const,
         text: JSON.stringify({ threadId: thread.id, messageCount: messages.length, messages }, null, 2),
       }],
+      details: {},
     };
   },
 };

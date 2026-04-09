@@ -3,6 +3,7 @@ import { searchMessages, getMessage, getHeader } from "../gmail/client.js";
 
 export const gmailSearchTool = {
   name: "gmail_search",
+  label: "Gmail Search",
   description:
     "Search Gmail messages using Gmail search syntax (e.g. 'from:someone@example.com', 'is:unread', 'subject:invoice'). " +
     "Returns message summaries with id, subject, sender, date, snippet, and labels.",
@@ -16,7 +17,7 @@ export const gmailSearchTool = {
     const res = await searchMessages(params.query, max, params.pageToken);
 
     if (!res.messages?.length) {
-      return { content: [{ type: "text" as const, text: "No messages found." }] };
+      return { content: [{ type: "text" as const, text: "No messages found." }], details: {} };
     }
 
     const summaries = await Promise.all(
@@ -41,6 +42,6 @@ export const gmailSearchTool = {
       messages: summaries,
     };
 
-    return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+    return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }], details: {} };
   },
 };

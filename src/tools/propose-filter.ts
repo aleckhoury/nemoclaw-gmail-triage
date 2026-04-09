@@ -3,6 +3,7 @@ import { addProposal } from "../queue/proposals.js";
 
 export const gmailProposeFilterTool = {
   name: "gmail_propose_filter",
+  label: "Propose Filter",
   description:
     "Propose a Gmail filter for user review. The filter will NOT be created until the user approves it " +
     "through the web UI or /gmail review command. Include your reasoning for why this filter would help.",
@@ -55,6 +56,7 @@ export const gmailProposeFilterTool = {
           message: "Filter proposal saved. User will review in the Gmail Triage UI.",
         }),
       }],
+      details: {},
     };
   },
 };

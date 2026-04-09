@@ -187,32 +187,53 @@ const handleAuditLog: RouteHandler = async (_req, res) => {
   json(res, { audit: entries });
 };
 
-export const routes: Record<string, RouteHandler> = {
-  "GET /gmail-triage": handleDashboard,
-  "GET /gmail-triage/api/queues": handleGetQueues,
-  "GET /gmail-triage/api/proposals": handleGetProposals,
-  "GET /gmail-triage/api/audit": handleAuditLog,
-  "POST /gmail-triage/api/archive": handleArchive,
-  "POST /gmail-triage/api/trash": handleTrash,
-  "POST /gmail-triage/api/mark-read": handleMarkRead,
-  "POST /gmail-triage/api/approve-filter": handleApproveFilter,
-  "POST /gmail-triage/api/reject-proposal": handleRejectProposal,
-  "POST /gmail-triage/api/send-draft": handleSendDraft,
+const apiRoutes: Record<string, RouteHandler> = {
+  "/api/queues": handleGetQueues,
+  "/api/proposals": handleGetProposals,
+  "/api/audit": handleAuditLog,
+  "/api/archive": handleArchive,
+  "/api/trash": handleTrash,
+  "/api/mark-read": handleMarkRead,
+  "/api/approve-filter": handleApproveFilter,
+  "/api/reject-proposal": handleRejectProposal,
+  "/api/send-draft": handleSendDraft,
 };
 
 export function registerRoutes(api: {
-  registerHttpRoute: (method: string, path: string, handler: (req: IncomingMessage, res: ServerResponse) => void) => void;
+  registerHttpRoute: (params: {
+    path: string;
+    handler: (req: IncomingMessage, res: ServerResponse) => Promise<boolean | void> | boolean | void;
+    auth: "gateway" | "plugin";
+    match?: "exact" | "prefix";
+  }) => void;
 }): void {
-  for (const [key, handler] of Object.entries(routes)) {
-    const [method, path] = key.split(" ");
-    api.registerHttpRoute(method, path, async (req: IncomingMessage, res: ServerResponse) => {
+  api.registerHttpRoute({
+    path: "/gmail-triage",
+    auth: "gateway",
+    match: "prefix",
+    async handler(req: IncomingMessage, res: ServerResponse) {
       try {
-        const body = method === "POST" ? await readBody(req) : {};
-        await handler(req, res, body);
+        const url = new URL(req.url ?? "/", "http://localhost");
+        const subPath = url.pathname.replace(/^\/gmail-triage/, "") || "/";
+
+        if (subPath === "/" || subPath === "") {
+          const body = {};
+          await handleDashboard(req, res, body);
+          return;
+        }
+
+        const routeHandler = apiRoutes[subPath];
+        if (!routeHandler) {
+          json(res, { error: "Not found" }, 404);
+          return;
+        }
+
+        const body = req.method === "POST" ? await readBody(req) : {};
+        await routeHandler(req, res, body);
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         json(res, { error: msg }, 500);
       }
-    });
-  }
+    },
+  });
 }

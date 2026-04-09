@@ -3,6 +3,7 @@ import * as gmail from "../gmail/client.js";
 
 export const gmailInboxStatsTool = {
   name: "gmail_inbox_stats",
+  label: "Inbox Statistics",
   description:
     "Get aggregate inbox statistics: total unread, unread by label, and top senders. " +
     "Useful for getting a birds-eye view before diving into triage.",
@@ -28,7 +29,7 @@ export const gmailInboxStatsTool = {
       topSenders,
     };
 
-    return { content: [{ type: "text" as const, text: JSON.stringify(stats, null, 2) }] };
+    return { content: [{ type: "text" as const, text: JSON.stringify(stats, null, 2) }], details: {} };
   },
 };
 

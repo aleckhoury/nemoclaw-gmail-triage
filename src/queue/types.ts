@@ -34,6 +34,10 @@ export type NewProposal =
   | Omit<FilterProposal, "id" | "createdAt">
   | Omit<DraftReplyProposal, "id" | "createdAt">;
 
+export type NewFilterProposal = Omit<FilterProposal, "id" | "createdAt">;
+export type NewDraftReplyProposal = Omit<DraftReplyProposal, "id" | "createdAt">;
+export type NewProposal = NewFilterProposal | NewDraftReplyProposal;
+
 export interface AuditEntry {
   timestamp: string;
   action: string;

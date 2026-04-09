@@ -9,6 +9,7 @@ function getPrefix(): string {
 
 export const gmailListLabelsTool = {
   name: "gmail_list_labels",
+  label: "List Labels",
   description: "List all Gmail labels with message and unread counts.",
   parameters: Type.Object({}),
   async execute() {
@@ -23,12 +24,13 @@ export const gmailListLabelsTool = {
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    return { content: [{ type: "text" as const, text: JSON.stringify(sorted, null, 2) }] };
+    return { content: [{ type: "text" as const, text: JSON.stringify(sorted, null, 2) }], details: {} };
   },
 };
 
 export const gmailCreateLabelTool = {
   name: "gmail_create_label",
+  label: "Create Triage Label",
   description:
     `Create a new Gmail label under the triage prefix (${TRIAGE_PREFIX_DEFAULT}/). ` +
     "Used to build the triage queue taxonomy. " +
@@ -44,6 +46,7 @@ export const gmailCreateLabelTool = {
     if (depth > 3) {
       return {
         content: [{ type: "text" as const, text: "Error: Max label depth is 3 levels under the triage prefix." }],
+        details: {},
       };
     }
 
@@ -54,18 +57,21 @@ export const gmailCreateLabelTool = {
     if (found) {
       return {
         content: [{ type: "text" as const, text: JSON.stringify({ exists: true, id: found.id, name: found.name }) }],
+        details: {},
       };
     }
 
     const label = await gmail.createLabel(fullName);
     return {
       content: [{ type: "text" as const, text: JSON.stringify({ created: true, id: label.id, name: label.name }) }],
+      details: {},
     };
   },
 };
 
 export const gmailApplyLabelsTool = {
   name: "gmail_apply_labels",
+  label: "Apply Triage Labels",
   description:
     `Apply or remove triage labels (under ${TRIAGE_PREFIX_DEFAULT}/) on messages. ` +
     "ONLY triage labels can be modified — system labels (INBOX, TRASH, SPAM) and user labels outside the triage prefix are blocked.",
@@ -92,6 +98,7 @@ export const gmailApplyLabelsTool = {
             type: "text" as const,
             text: `Error: Label "${name}" is outside the triage prefix "${prefix}/". Only triage labels can be modified by the agent.`,
           }],
+          details: {},
         };
       }
     }
@@ -126,6 +133,7 @@ export const gmailApplyLabelsTool = {
           removed: params.removeLabels ?? [],
         }),
       }],
+      details: {},
     };
   },
 };

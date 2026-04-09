@@ -3,6 +3,7 @@ import { addProposal } from "../queue/proposals.js";
 
 export const gmailProposeDraftReplyTool = {
   name: "gmail_propose_draft_reply",
+  label: "Propose Draft Reply",
   description:
     "Propose a draft reply to an email thread. The reply will NOT be sent or saved as a Gmail draft " +
     "until the user approves it through the web UI. Include your reasoning.",
@@ -41,6 +42,7 @@ export const gmailProposeDraftReplyTool = {
           message: "Draft reply proposal saved. User will review in the Gmail Triage UI.",
         }),
       }],
+      details: {},
     };
   },
 };
