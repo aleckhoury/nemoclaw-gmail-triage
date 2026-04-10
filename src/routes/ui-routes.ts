@@ -209,7 +209,7 @@ export function registerRoutes(api: {
 }): void {
   api.registerHttpRoute({
     path: "/gmail-triage",
-    auth: "gateway",
+    auth: "plugin",
     match: "prefix",
     async handler(req: IncomingMessage, res: ServerResponse) {
       try {
